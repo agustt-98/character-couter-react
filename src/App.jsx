@@ -1,5 +1,9 @@
 import { use, useState } from "react"
-import { Header } from "./components/Header"
+import { Header } from "./components/Header.jsx"
+import { WriteArea } from "./components/WriteArea.jsx"
+import { Controls } from "./components/Controls.jsx"
+import { Stats } from "./components/Stats.jsx"
+import { LetterDensity } from "./components/LetterDensity.jsx"
 
 const App = () => {
 
@@ -10,6 +14,18 @@ const App = () => {
   const [limitCharacter, setLimitCharacter] = useState(false)
 
   const [limitValue, setLimitValue] = useState(300)
+
+  const [showAll, setShowAll] = useState(false)
+
+  const [dark, setDark] = useState(false) 
+
+  const handleExcludeSpaces = () => {
+    setExcludeSpaces(!excludeSpaces)
+  }
+
+  const handleLimitValue = () => {
+    setLimitValue(!limitCharacter)
+  }
 
   const characters = excludeSpaces ? text.replace(/\s/g, "").length : text.length
 
@@ -36,13 +52,15 @@ const App = () => {
     setText(newText)
   }
 
+  const handleShowAll = () => {
+    setShowAll(!showAll)
+  }
+
   const cleanText = text.toLowerCase().replace(/[^a-záéíóúñü]/g, "")
 
   const total = cleanText.length
 
-  const dictionaryLetters = {
-
-  }
+  const dictionaryLetters = {}
 
   cleanText.split("").forEach(letter => {
     dictionaryLetters[letter] = (dictionaryLetters[letter] || 0) + 1 
@@ -63,47 +81,43 @@ const App = () => {
 
   const sortLetters = letters.sort((a, b) => b.amount - a.amount)
 
+  const visibleLetters = showAll ? sortLetters : sortLetters.slice(0, 5)
+
+  const handleDarkTheme = () => {
+    setDark(!dark)
+  }
+
   return (
-    <main>
-      <Header />
+    <main className={`${dark ? "dark-theme" : ""}`}>
+
+      <Header dark={dark} handleDarkTheme={handleDarkTheme}/>
 
       <h2>Analyze your text<br></br>in real-time.</h2>
 
-      <textarea 
-        onChange={handleChangeTextArea} 
-        value={text}>
-      </textarea>
-      <div>
-        <label>
-          <input type="checkbox" checked={excludeSpaces} onChange={() => setExcludeSpaces(!excludeSpaces)}/>
-            Exclude Spaces
-        </label>
-        <label>
-          <input type="checkbox" checked={limitCharacter} onChange={handleChangeLimitInput}/>
-            Set Character Limit
-        </label>
-        {
-          limitCharacter && <input type="number" value={limitValue} onChange={(e) => setLimitValue(e.target.value)} />
-        }
-      </div>
-      <p>Total Characters: {characters}</p>
-      <p>Word Count: {words}</p>
-      <p>Sentence Count: {sentences}</p>
-      <p>Reading Time: ~{readingTime} minutes</p>
+      <WriteArea 
+        handleChangeTextArea={handleChangeTextArea}
+        text={text}
+      />
 
-      <section>
-        <h2>Letter Density</h2>
-        <article>
-          {
-            sortLetters.map(letters => (
-            <div key={letters.letter}> 
-              <span>{letters.letter.toUpperCase()}</span>
-              <meter min="0" max="100" value={letters.percentage}></meter>
-              <span>{letters.amount} ({letters.percentage.toFixed(2)}%)</span>
-            </div>))
-          }
-        </article>
-      </section>
+      <Controls 
+        excludeSpaces={excludeSpaces}
+        handleExcludeSpaces={handleExcludeSpaces} 
+        limitCharacter={limitCharacter}
+        handleChangeLimitInput={handleChangeLimitInput} 
+        limitValue={limitValue} 
+        handleLimitValue={handleLimitValue}
+      />
+
+      <Stats 
+        words={words}
+        sentences={sentences}
+        characters={characters}
+        readingTime={readingTime}
+      />
+
+      <LetterDensity
+        sortLetters={sortLetters}
+      />
     </main>
   )
 
