@@ -4,6 +4,7 @@ import { WriteArea } from "./components/WriteArea.jsx"
 import { Controls } from "./components/Controls.jsx"
 import { Stats } from "./components/Stats.jsx"
 import { LetterDensity } from "./components/LetterDensity.jsx"
+import "./index.css"
 
 const App = () => {
 
@@ -23,9 +24,13 @@ const App = () => {
     setExcludeSpaces(!excludeSpaces)
   }
 
-  const handleLimitValue = () => {
-    setLimitValue(!limitCharacter)
+  const handleLimitValue = (e) => {
+  const newValue = e.target.value;
+
+  if (newValue === "" || Number(newValue) > 0) {
+    setLimitValue(newValue);
   }
+}
 
   const characters = excludeSpaces ? text.replace(/\s/g, "").length : text.length
 
@@ -84,42 +89,48 @@ const App = () => {
   const visibleLetters = showAll ? sortLetters : sortLetters.slice(0, 5)
 
   const handleDarkTheme = () => {
-    setDark(!dark)
+    setDark((currentTheme) => !currentTheme)
   }
 
   return (
-    <main className={`${dark ? "dark-theme" : ""}`}>
+  <div className={`principal ${dark ? "dark-theme" : "light-theme"}`}>
+    <Header
+      dark={dark}
+      handleDarkTheme={handleDarkTheme}
+    />
 
-      <Header dark={dark} handleDarkTheme={handleDarkTheme}/>
+    <main className="main">
+      <h1 className="main-title">
+        Analyze your text
+        <br />
+        in real-time.
+      </h1>
 
-      <h2>Analyze your text<br></br>in real-time.</h2>
-
-      <WriteArea 
-        handleChangeTextArea={handleChangeTextArea}
+      <WriteArea
         text={text}
+        handleChangeTextArea={handleChangeTextArea}
       />
 
-      <Controls 
+      <Controls
         excludeSpaces={excludeSpaces}
-        handleExcludeSpaces={handleExcludeSpaces} 
+        handleExcludeSpaces={handleExcludeSpaces}
         limitCharacter={limitCharacter}
-        handleChangeLimitInput={handleChangeLimitInput} 
-        limitValue={limitValue} 
+        handleChangeLimitInput={handleChangeLimitInput}
+        limitValue={limitValue}
         handleLimitValue={handleLimitValue}
-      />
-
-      <Stats 
-        words={words}
-        sentences={sentences}
-        characters={characters}
         readingTime={readingTime}
       />
 
-      <LetterDensity
-        sortLetters={sortLetters}
+      <Stats
+        characters={characters}
+        words={words}
+        sentences={sentences}
       />
+
+      <LetterDensity sortLetters={sortLetters} />
     </main>
-  )
+  </div>
+)
 
 } 
 

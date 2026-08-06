@@ -1,14 +1,22 @@
 import { useState } from "react"
+import logo from "../assets/images/logo.png"
 
 const Header = ({dark, handleDarkTheme}) => {
 
     return (
-        <header>
-        <div>
-            <p>C</p>
-            <h1>Character Counter</h1>
-        </div>
-        <button onClick={() => handleDarkTheme(!dark)}>☀</button>
+        <header className="header">
+            <div className="titulo">
+                <img src={logo} />
+                <h1>Character Counter</h1>
+            </div>
+
+            <button
+                className="tema-button"
+                type="button"
+                onClick={handleDarkTheme}
+            >
+                {dark ? "☀️" : "🌙"}
+            </button>
     </header>
     )
     
