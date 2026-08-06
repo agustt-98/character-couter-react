@@ -34,8 +34,6 @@ const App = () => {
     setText(newText)
   }
 
-}
-
   return (
     <main>
       <Header />
@@ -65,4 +63,6 @@ const App = () => {
     </main>
   )
 
-export {App}
+} 
+
+export { App }
